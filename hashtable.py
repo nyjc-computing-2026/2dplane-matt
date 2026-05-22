@@ -84,7 +84,6 @@ class HashTable:
         
         
 
-
 class HashTableLinearProbing(HashTable):
     """A hashtable that implements collision resolution using
     linear probing.
@@ -144,6 +143,69 @@ class HashTableLinearProbing(HashTable):
         """
         raise NotImplementedError
 
+class Node:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.size = 0
+
+    def setkey(self,key,value):
+        node = Node(key, value)
+        if not self.head:
+            self.head = node
+            return
+        
+        current = self.head
+        while current.next is not None:  # check till u reach None at the end
+            if current.key != key:       # if key doesnt exxist,just write on next empty gap
+                current = current.next
+            else:
+                current.value = value    # if key alr exists overwrite the value
+                return
+        current.next = node
+
+    def getkey(self,key):
+        if not self.head:
+            raise KeyError
+        
+        current = self.head
+
+        while current.next is not None:
+            if current.key == key:        # its the key of current so its an attribute
+                return current.value
+        raise KeyError
+    
+    def delkey(self,key):
+        if not self.head:
+            raise KeyError
+        elif self.head.key == key:
+            self.head = self.head.next
+            return 
+
+        previous = self.head
+        current = self.head.next
+
+        while current is not None:
+            if current.key == key:
+                previous.next = current.next
+                return 
+            previous = current
+            current = current.next
+        raise KeyError
+    
+                
+
+
+
+
+        
+
+    
 
 class HashTableSeparateChaining(HashTable):
     """A hashtable that implements collision resolution using
@@ -156,7 +218,8 @@ class HashTableSeparateChaining(HashTable):
 
     def __init__(self, size: int):
         super().__init__(size)
-        # Add your code here
+        for i in range(self.size):
+            self._data[i] = LinkedList()
 
     def __repr__(self) -> str:
         return f"HashTableLinearProbing(size={self.size})"
@@ -167,18 +230,21 @@ class HashTableSeparateChaining(HashTable):
         If the key already exists in the hash table, the existing value
         is overwritten.
         """
-        raise NotImplementedError
+        index = _hash_key(key)
+        self._data[index].setkey(key, value)
 
     def getitem(self, key: str) -> dict:
         """Retrieves the value associated with key, and returns it.
 
         If the key does not exist, a KeyError is raised.
         """
-        raise NotImplementedError
+        index = _hash_key(key)
+        return self._data[index].getkey(key)
 
     def delitem(self, key: str) -> None:
         """Deletes the key and its associated value from the hash table.
 
         If the key does not exist, a KeyError is raised.
         """
-        raise NotImplementedError
+        index = _hash_key(key)
+        self._data[index].delkey(key)
