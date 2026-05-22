@@ -16,5 +16,10 @@ if __name__ == "__main__":
         for record in csv.DictReader(f):
             data.append(record)
     for record in data:
-        print(record["id"], _hash_key(record["id"]) % 15)
-    #     ht.setitem(record["id"], record)
+        index = _hash_key(record["id"]) % 15
+        print(record["id"], index)
+        ht.setitem(record["id"], record)
+
+    print(f"Number of records: {len(data)}")
+    for row in ht._data:
+        print(row)          # printing the hashtable

@@ -33,12 +33,13 @@ class HashTable:
     """
 
     def __init__(self, size: int):
-        self.size = size
-        self.length = 0
+        self.size = size               # total number of slots for data to be stored in hashtable
+        self.length = 0                # current number of keys in hashtable
+        self._data = [None] * size     # the empty hashtable where the data will be stored
         # Add your code here
 
     def __repr__(self) -> str:
-        return f"HashTable(size={self.size})"
+        return f"HashTable(size={self.size})" 
 
     def setitem(self, key: str, value: dict) -> None:
         """Stores key and value in the hash table.
@@ -46,21 +47,42 @@ class HashTable:
         If the key already exists in the hash table, the existing value
         is overwritten.
         """
-        raise NotImplementedError
+        index = _hash_key(key) % self.size
+        start = index
+        while (index + 1) % self.size != start:
+            if self._data[index] is None:
+                self._data[index] = (key, value)
+                self.length += 1
+
+        
 
     def getitem(self, key: str) -> dict:
         """Retrieves the value associated with key, and returns it.
 
         If the key does not exist, a KeyError is raised.
         """
-        raise NotImplementedError
+        index = _hash_key(key)
+        if index >= self.length:
+            index = index % self.size
+        if self._data[index] is None:
+            raise KeyError('Key does not exist')
+        else:
+            return self._data[index]
+            
 
     def delitem(self, key: str) -> None:
         """Deletes the key and its associated value from the hash table.
 
         If the key does not exist, a KeyError is raised.
         """
-        raise NotImplementedError
+        index = _hash_key(key)
+        if index >= self.length:
+            index = index % self.size
+        if self._data[index] is None:
+            raise KeyError('Key does not exist')
+        self._data[index] = None
+        
+        
 
 
 class HashTableLinearProbing(HashTable):
@@ -74,6 +96,7 @@ class HashTableLinearProbing(HashTable):
 
     def __init__(self, size: int):
         super().__init__(size)
+
         # Add your code here
 
     def __repr__(self) -> str:
@@ -85,14 +108,34 @@ class HashTableLinearProbing(HashTable):
         If the key already exists in the hash table, the existing value
         is overwritten.
         """
-        raise NotImplementedError
+        index = _hash_key(key) % self.size
+        start = index
+        while (index + 1) % self.size != start:
+            if self._data[index] is None:
+                self._data[index] = (key, value)
+                self.length += 1
+
+            existingkey = self._data[index]
+            if existingkey == key:
+                return
+            self._data[index] = (key, value)
 
     def getitem(self, key: str) -> dict:
         """Retrieves the value associated with key, and returns it.
 
         If the key does not exist, a KeyError is raised.
         """
-        raise NotImplementedError
+        index = _hash_key(key) % self.size
+        start = index
+        while (index + 1) % self.size != start:
+            if self._data[index] is None:
+                raise KeyError
+
+            existingkey = self._data[index]
+            if existingkey == key:
+                return self._data[index]
+            
+            index += 1
 
     def delitem(self, key: str) -> None:
         """Deletes the key and its associated value from the hash table.
